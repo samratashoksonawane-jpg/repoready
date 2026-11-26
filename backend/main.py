@@ -250,6 +250,35 @@ def calculate_readiness_score(readme_score, file_checks):
     )
 
     return min(score, 100)
+
+def detect_file_checks(repository, readme_content, contents, github_dir_contents):
+    file_names = {
+        item.get("name", "").lower()
+        for item in contents + github_dir_contents
+        if isinstance(item, dict)
+    }
+
+    return {
+        "description": bool(repository.get("description")),
+        "topics": bool(repository.get("topics")),
+        "readme": bool(readme_content),
+        "contributing": any(
+            name.startswith("contributing") for name in file_names
+        ),
+        "license": any(
+            name.startswith("license") for name in file_names
+        ),
+        "code_of_conduct": any(
+            name.startswith("code_of_conduct") for name in file_names
+        ),
+        "issue_template": any(
+            "issue_template" in name for name in file_names
+        ),
+        "pull_request_template": any(
+            "pull_request_template" in name for name in file_names
+        ),
+    }
+
 @app.post("/analyze")
 async def analyze_repository(request: AnalyzeRequest):
     owner, repo = parse_github_url(str(request.repository_url))
@@ -343,37 +372,14 @@ async def analyze_repository(request: AnalyzeRequest):
             readme_content
         )
 
-    # Identify existing repository files.
-    file_names = {
-        item.get("name", "").lower()
-        for item in contents
-        if isinstance(item, dict)
-    }
-
-    file_checks = {
-        "description": bool(repository.get("description")),
-        "topics": bool(repository.get("topics")),
-        "readme": bool(readme_content),
-        "contributing": any(
-            name.startswith("contributing") for name in file_names
-    ),
-        "license": any(
-            name.startswith("license") for name in file_names
-    ),
-        "code_of_conduct": any(
-            name.startswith("code_of_conduct") for name in file_names
-    ),
-        "issue_template": any(
-            "issue_template" in name for name in file_names
-    ),
-        "pull_request_template": (
-            any("pull_request_template" in name for name in file_names)
-            or any(
-               "pull_request_template" in item.get("name", "").lower()
-                for item in github_dir_contents
-            )
-        ),
-    }
+     # Detect repository files and contributor resources.
+        file_checks = detect_file_checks(
+            repository,
+            readme_content,
+            contents,
+            github_dir_contents
+        )
+    
 
     # Analyze README quality.
     readme_analysis = analyze_readme(readme_content)
