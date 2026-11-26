@@ -1,4 +1,4 @@
-
+from fastapi.middleware.cors import CORSMiddleware
 import re
 import base64
 from urllib.parse import urlparse
@@ -12,7 +12,16 @@ app = FastAPI(
     description="Analyze GitHub repositories and improve contributor readiness.",
     version="0.3.0"
 )
-
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 GITHUB_API = "https://api.github.com"
 
 
