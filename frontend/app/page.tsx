@@ -124,7 +124,7 @@ export default function Home() {
     <div className="min-h-screen bg-[#080B14] text-slate-100">
       <div className="flex min-h-screen">
         {/* Sidebar */}
-        <aside className="hidden w-64 shrink-0 border-r border-white/[0.07] bg-[#0B0F1A] px-5 py-7 lg:flex lg:flex-col">
+        <aside className="no-print hidden w-64 shrink-0 border-r border-white/[0.07] bg-[#0B0F1A] px-5 py-7 lg:flex lg:flex-col">
           <div className="flex items-center gap-3 px-2">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-cyan-400 text-lg font-black text-[#07111D] shadow-lg shadow-cyan-500/20">
               R
@@ -171,7 +171,7 @@ export default function Home() {
         {/* Main content */}
         <main className="min-w-0 flex-1">
           {/* Top bar */}
-          <header className="flex h-[72px] items-center justify-between border-b border-white/[0.07] px-5 sm:px-9">
+          <header className="no-print flex h-[72px] items-center justify-between border-b border-white/[0.07] px-5 sm:px-9">
             <div className="flex items-center gap-2 text-sm text-slate-500">
               <span className="lg:hidden font-bold text-slate-100">
                 Repo<span className="text-cyan-400">Ready</span>
@@ -193,7 +193,7 @@ export default function Home() {
 
           <div className="mx-auto max-w-6xl px-5 py-10 sm:px-9 sm:py-14">
             {/* Page heading */}
-            <div className="mb-9 max-w-2xl">
+            <div className="no-print mb-9 max-w-2xl">
               <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-cyan-400/15 bg-cyan-400/[0.06] px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.18em] text-cyan-300">
                 <span className="h-1.5 w-1.5 rounded-full bg-cyan-400" />
                 Open-source intelligence
@@ -213,7 +213,7 @@ export default function Home() {
             </div>
 
             {/* Repository input */}
-            <section className="relative overflow-hidden rounded-2xl border border-white/[0.09] bg-[#101725] p-5 shadow-2xl shadow-black/20 sm:p-7">
+            <section className="no-print relative overflow-hidden rounded-2xl border border-white/[0.09] bg-[#101725] p-5 shadow-2xl shadow-black/20 sm:p-7">
               <div className="pointer-events-none absolute -right-16 -top-28 h-64 w-64 rounded-full bg-cyan-500/[0.06] blur-3xl" />
 
               <div className="relative">
@@ -288,7 +288,7 @@ export default function Home() {
 
             {/* Results or empty state */}
             {result ? (
-              <section className="mt-9 space-y-6">
+              <section className="print-report mt-9 space-y-6">
                 {/* Repository information */}
                 <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
                   <div>
@@ -303,14 +303,24 @@ export default function Home() {
                         "No repository description provided."}
                     </p>
                   </div>
-                  <a
-                    href={result.repository.url}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="text-sm font-medium text-cyan-400 hover:text-cyan-300"
-                  >
-                    View on GitHub ↗
-                  </a>
+                  <div className="flex items-center gap-3">
+                    <button
+                      type="button"
+                      onClick={() => window.print()}
+                      className="no-print rounded-xl border border-cyan-400/20 bg-cyan-400/10 px-4 py-2 text-sm font-semibold text-cyan-300 transition hover:bg-cyan-400/20"
+                    >
+                      ↓ Export PDF
+                    </button>
+
+                    <a
+                      href={result.repository.url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-sm font-medium text-cyan-400 hover:text-cyan-300"
+                    >
+                      View on GitHub ↗
+                    </a>
+                  </div>
                 </div>
 
                 {/* Score and repository details */}
@@ -565,7 +575,7 @@ export default function Home() {
                       What RepoReady analyzes
                     </h3>
                     <p className="mt-1 text-xs text-slate-500">
-                      A practical overview of your repository's contributor
+                      A practical overview of your repository&apos;s contributor experience.
                       experience.
                     </p>
                   </div>
