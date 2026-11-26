@@ -278,6 +278,25 @@ def detect_file_checks(repository, readme_content, contents, github_dir_contents
             "pull_request_template" in name for name in file_names
         ),
     }
+    
+def validate_repository_response(repo_response):
+    if repo_response.status_code == 404:
+        raise HTTPException(
+            status_code=404,
+            detail="Repository not found or is private."
+        )
+
+    if repo_response.status_code == 403:
+        raise HTTPException(
+            status_code=429,
+            detail="GitHub API rate limit reached. Try again later."
+        )
+
+    if repo_response.status_code != 200:
+        raise HTTPException(
+            status_code=502,
+            detail="Unable to retrieve repository information."
+        )
 
 @app.post("/analyze")
 async def analyze_repository(request: AnalyzeRequest):
@@ -296,23 +315,7 @@ async def analyze_repository(request: AnalyzeRequest):
             headers=headers
         )
 
-        if repo_response.status_code == 404:
-            raise HTTPException(
-                status_code=404,
-                detail="Repository not found or is private."
-            )
-
-        if repo_response.status_code == 403:
-            raise HTTPException(
-                status_code=429,
-                detail="GitHub API rate limit reached. Try again later."
-            )
-
-        if repo_response.status_code != 200:
-            raise HTTPException(
-                status_code=502,
-                detail="Unable to retrieve repository information."
-            )
+        validate_repository_response(repo_response)
 
         repository = repo_response.json()
 
